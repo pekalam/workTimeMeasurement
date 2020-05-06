@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using Prism.Mvvm;
 using Prism.Regions;
@@ -8,6 +9,7 @@ namespace WindowUI.Profile
     public interface IProfileViewController
     {
         void Init(ProfileViewModel vm);
+        ICommand RestartInit { get; }
     }
 
     public class ProfileViewModel : BindableBase, INavigationAware
@@ -19,7 +21,10 @@ namespace WindowUI.Profile
         public ProfileViewModel(IProfileViewController controller)
         {
             _controller = controller;
+            RestartInit = controller.RestartInit;
         }
+
+        public ICommand RestartInit { get; set; }
 
         public ObservableCollection<BitmapImage> ReferenceImgs
         {

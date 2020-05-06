@@ -26,7 +26,7 @@ namespace WindowUI.FaceInitialization
         ICommand BackCommand { get; }
         void Exit();
     }
-
+    //todo time init 3s
     public class FaceInitializationController : IFaceInitializationController
     {
         private ICommand _userPanelNavigation;
@@ -61,6 +61,7 @@ namespace WindowUI.FaceInitialization
         private void BackExecute()
         {
             _camCts.Cancel();
+            _regionManager.Regions[ShellRegions.MainRegion].Remove(_regionManager.Regions[ShellRegions.MainRegion].ActiveViews.First());
             _regionManager.Regions[ShellRegions.MainRegion].RequestNavigate(nameof(MainWindowView));
         }
 
