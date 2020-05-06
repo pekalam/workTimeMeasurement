@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DefineConstants>TRACE;RELEASE</DefineConstants>
+    <DefineConstants>TRACE;DEV_MODE</DefineConstants>
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
