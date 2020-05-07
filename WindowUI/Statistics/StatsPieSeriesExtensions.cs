@@ -15,7 +15,15 @@ namespace WindowUI.Statistics
 
         private static string TimeStr(long ms)
         {
-            if (ms >= 36_000)
+            if (ms >= 36_000 * 60 * 24)
+            {
+                return (ms / 36_000).ToString("f") + " d";
+            }
+            else if (ms >= 36_000 * 60)
+            {
+                return (ms / 36_000).ToString("f") + " h";
+            }
+            else if (ms >= 36_000)
             {
                 return (ms / 36_000).ToString("f") + " min";
             }
@@ -28,7 +36,7 @@ namespace WindowUI.Statistics
         private static PieSeries CreateSeries(long ms, string label = "")
         {
             var series = new PieSeries();
-            series.LabelPoint = _ => label + TimeStr(ms);
+            series.LabelPoint = _ => label + "\n" + TimeStr(ms);
             series.DataLabels = true;
             series.Values = new ChartValues<long>(new[] { ms });
             return series;

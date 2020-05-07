@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Domain.Repositories;
@@ -22,17 +23,17 @@ namespace WindowUI.Statistics
             var series = selected
                 .SelectMany(w => w.MouseActionEvents)
                 .GroupBy(a => a.MkEvent.Executable)
-                .Select(g => g.AsEnumerable().ToPieSeries(g.Key + "\n"))
+                .Select(g => g.AsEnumerable().ToPieSeries(g.Key))
                 .SelectMany(s => s)
 
                 .Concat(selected.SelectMany(w => w.KeyboardActionEvents)
                     .GroupBy(a => a.MkEvent.Executable)
-                    .Select(g => g.AsEnumerable().ToPieSeries(g.Key + "\n"))
+                    .Select(g => g.AsEnumerable().ToPieSeries(g.Key))
                     .SelectMany(s => s))
 
                 .Concat(selected.SelectMany(w => w.UserWatchingScreen)
                     .GroupBy(a => a.Executable)
-                    .Select(g => g.AsEnumerable().ToPieSeries(g.Key + "\n"))
+                    .Select(g => g.AsEnumerable().ToPieSeries(g.Key))
                     .SelectMany(s => s))
 
                 .Concat(selected.SelectMany(w => w.FaceRecognitionFailures).ToPieSeries("Unknown"))
@@ -40,6 +41,17 @@ namespace WindowUI.Statistics
 
             return series;
         }
+
+        public static List<PieSeries> RemoveShort(this List<PieSeries> series,bool remove)
+        {
+            if (remove)
+            {
+                var avg = series.Sum(s => (long) s.Values[0]) / (float)series.Count;
+                return series.Where(s => ((long) s.Values[0]) * 100 / avg > 50.0).ToList();
+            }
+
+            return series;
+        } 
     }
 
     public interface IOverallStatsController
@@ -87,7 +99,7 @@ namespace WindowUI.Statistics
 
         private void UpdateApplicationsSeries(List<WorkTime> selected)
         {
-            var series = selected.ToApplicationsPieSeries();
+            var series = selected.ToApplicationsPieSeries().RemoveShort(!_vm.ShowAll);
 
             Dispatcher.CurrentDispatcher.InvokeAsync(() =>
             {
@@ -207,9 +219,13 @@ namespace WindowUI.Statistics
                     UpdateChart();
                     break;
                 case nameof(OverallStatsViewModel.SelectedChartType):
+                    _vm.ShowAllVisibility = _vm.SelectedChartType == OverallStatsChartTypes.Applications ? Visibility.Visible : Visibility.Hidden;
                     UpdateChart();
                     break;
                 case nameof(OverallStatsViewModel.SelectedExecutable):
+                    UpdateChart();
+                    break;
+                case nameof(OverallStatsViewModel.ShowAll):
                     UpdateChart();
                     break;
             }

@@ -22,24 +22,33 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="100" />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,20,0,30">
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,10,0,30">
             <mah:SplitButton Margin="5" Height="Auto"
                              SelectedItem="{Binding SelectedChartType}"
-                             ItemsSource="{Binding ChartTypes}">
+                             ItemsSource="{Binding ChartTypes}"
+                             MinWidth="150" HorizontalContentAlignment="Left" Padding="5,0,0,0">
                 <mah:SplitButton.Icon>
-                    <iconPacks:FontAwesome Kind="ChartPieSolid" />
+                    <Border Padding="4,0,0,0">
+                        <iconPacks:FontAwesome Kind="ChartPieSolid" />
+                    </Border>
                 </mah:SplitButton.Icon>
             </mah:SplitButton>
             <mah:SplitButton Margin="10,5,5,5" Height="Auto"
                              Visibility="{c:Binding 'SelectedChartType == local:OverallStatsChartTypes.SingleApplication', FalseToVisibility=Collapsed}"
                              SelectedItem="{Binding SelectedExecutable}"
-                             ItemsSource="{Binding Executables}">
+                             ItemsSource="{Binding Executables}"
+                             HorizontalContentAlignment="Left" Padding="5,0,0,0">
                 <mah:SplitButton.Icon>
-                    <iconPacks:FontAwesome Kind="MedappsBrands" />
+                    <Border Padding="4,0,0,0">
+                        <iconPacks:FontAwesome Kind="MedappsBrands" />
+                    </Border>
                 </mah:SplitButton.Icon>
             </mah:SplitButton>
+            <CheckBox Margin="18,0,0,0" Content="Show all" HorizontalAlignment="Right" VerticalAlignment="Center" IsChecked="{Binding ShowAll}" Visibility="{Binding ShowAllVisibility}"/>
         </StackPanel>
 
+        <!--Screen 1-->
 
         <wpf:PieChart Grid.Row="1"
                       Visibility="{c:Binding 'SelectedChartType == local:OverallStatsChartTypes.Applications', FalseToVisibility=Collapsed}"
@@ -47,23 +56,43 @@
                       Series="{Binding ApplicationsSeries}">
             <wpf:PieChart.Resources>
                 <Style TargetType="wpf:PieSeries">
-                    <Setter Property="DataLabels" Value="True"></Setter>
-                    <Setter Property="Foreground" Value="#303030"></Setter>
-                    <Setter Property="LabelPosition" Value="OutsideSlice"></Setter>
+                    <Setter Property="DataLabels" Value="True" />
+                    <Setter Property="Foreground" Value="#303030" />
+                    <Setter Property="LabelPosition" Value="OutsideSlice" />
                 </Style>
             </wpf:PieChart.Resources>
             <wpf:PieChart.ChartLegend>
-                <local:ApplicationChartLegend Margin="0,50,0,0"/>
+                <local:ApplicationChartLegend Margin="0,50,0,0" />
             </wpf:PieChart.ChartLegend>
         </wpf:PieChart>
+
+        <!---->
+
+
+        <!--Screen 2-->
+
         <wpf:PieChart Grid.Row="1"
                       Visibility="{c:Binding 'SelectedChartType == local:OverallStatsChartTypes.Summary', FalseToVisibility=Collapsed}"
                       Margin="20" LegendLocation="Bottom" Hoverable="True" MaxHeight="800"
                       DataTooltip="{x:Null}" Series="{Binding SummarySeries}" />
+
+
+        <!---->
+
+
+        <!--Screen 3-->
+
         <wpf:PieChart Grid.Row="1"
                       Visibility="{c:Binding 'SelectedChartType == local:OverallStatsChartTypes.SingleApplication', FalseToVisibility=Collapsed}"
                       Margin="20" LegendLocation="Bottom" Hoverable="True" MaxHeight="800"
                       DataTooltip="{x:Null}" Series="{Binding SingleApplicationSeries}" />
+
+
+        <!---->
+
+
+        <!--Screen 4-->
+
         <DataGrid Grid.Row="1"
                   Visibility="{c:Binding 'SelectedChartType == local:OverallStatsChartTypes.Monitorings', FalseToVisibility=Collapsed}"
                   ItemsSource="{Binding Monitorings}" AutoGenerateColumns="False">
@@ -82,8 +111,16 @@
                 </Style>
             </DataGrid.CellStyle>
         </DataGrid>
-        <Grid Grid.Row="1" Visibility="{c:Binding '!IsShowingStats', FalseToVisibility=Hidden}" Panel.ZIndex="999" Background="White">
-            <TextBlock Text="No statistics available" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+        <!---->
+
+
+        <!--Date slider-->
+
+        <Grid Grid.Row="1" Visibility="{c:Binding '!IsShowingStats', FalseToVisibility=Hidden}" Panel.ZIndex="999"
+              Background="White">
+            <TextBlock Text="No statistics available" FontSize="30" VerticalAlignment="Center"
+                       HorizontalAlignment="Center" />
         </Grid>
         <Grid Grid.Row="2" Margin="0,10,0,10" VerticalAlignment="Center">
             <Grid.ColumnDefinitions>
@@ -129,6 +166,8 @@
                 </StackPanel>
             </StackPanel>
         </Grid>
+
+        <!---->
 
     </Grid>
 </UserControl>

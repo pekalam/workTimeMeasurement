@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using Domain.WorkTimeAggregate;
 using LiveCharts;
 using LiveCharts.Wpf;
@@ -32,6 +33,8 @@ namespace WindowUI.Statistics
         private List<string> _executables;
         private string _selectedExecutable;
         private bool _isShowingStats = true;
+        private bool _showAll;
+        private Visibility _showAllVisibility;
 
         public IOverallStatsController Controller { get; set; }
 
@@ -135,6 +138,18 @@ namespace WindowUI.Statistics
         {
             get => _isShowingStats;
             set => SetProperty(ref _isShowingStats, value);
+        }
+
+        public bool ShowAll
+        {
+            get => _showAll;
+            set => SetProperty(ref _showAll, value);
+        }
+
+        public Visibility ShowAllVisibility
+        {
+            get => _showAllVisibility;
+            set => SetProperty(ref _showAllVisibility, value);
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)

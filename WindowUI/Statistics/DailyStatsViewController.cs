@@ -50,7 +50,7 @@ namespace WindowUI.Statistics
             }
             _vm.IsShowingStats = true;
 
-            var series = workTimes.ToApplicationsPieSeries();
+            var series = workTimes.ToApplicationsPieSeries().RemoveShort(!_vm.ShowAll);
             _vm.ApplicationsSeries.Clear();
             _vm.ApplicationsSeries.AddRange(series);
         }
@@ -60,6 +60,9 @@ namespace WindowUI.Statistics
             switch (e.PropertyName)
             {
                 case nameof(DailyStatsViewModel.SelectedDate):
+                    UpdateChart();
+                    break;
+                case nameof(DailyStatsViewModel.ShowAll):
                     UpdateChart();
                     break;
             }

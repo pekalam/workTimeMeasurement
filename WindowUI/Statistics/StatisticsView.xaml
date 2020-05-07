@@ -5,32 +5,29 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-    xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-    xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
-    xmlns:designer="clr-namespace:WindowUI.__Designer"
     xmlns:statistics="clr-namespace:WindowUI.Statistics"
     mc:Ignorable="d" x:Class="WindowUI.Statistics.StatisticsView"
     prism:ViewModelLocator.AutoWireViewModel="True" d:DesignWidth="1200" d:DesignHeight="800">
-    <Grid Background="White" >
-        <mah:MetroAnimatedSingleRowTabControl x:Name="tab" SelectionChanged="MetroAnimatedSingleRowTabControl_SelectionChanged">
+    <Grid Background="White">
+        <mah:MetroAnimatedSingleRowTabControl x:Name="tab"
+                                              SelectionChanged="MetroAnimatedSingleRowTabControl_SelectionChanged">
             <TabItem Header="Overall">
                 <ScrollViewer Margin="2"
                               HorizontalScrollBarVisibility="Auto"
                               VerticalScrollBarVisibility="Auto">
 
-                        <Grid>
-                            <statistics:OverallStatisticsView DataContext="{Binding OverallStatsViewModel}"/>
-                        </Grid>
+                    <Grid>
+                        <statistics:OverallStatisticsView DataContext="{Binding OverallStatsViewModel}" />
+                    </Grid>
                 </ScrollViewer>
             </TabItem>
             <TabItem Header="Daily">
                 <ScrollViewer Margin="2"
                               HorizontalScrollBarVisibility="Auto"
-                              VerticalScrollBarVisibility="Auto" >
+                              VerticalScrollBarVisibility="Auto">
                     <Grid>
-                            <statistics:DailyStatsView DataContext="{Binding DailyStatsViewModel}"/>
-                        </Grid>
+                        <statistics:DailyStatsView DataContext="{Binding DailyStatsViewModel}" />
+                    </Grid>
                 </ScrollViewer>
             </TabItem>
         </mah:MetroAnimatedSingleRowTabControl>

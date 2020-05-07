@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+using System.Windows;
 using LiveCharts;
 using Prism.Mvvm;
 using Prism.Regions;
@@ -12,6 +13,8 @@ namespace WindowUI.Statistics
         private SeriesCollection _applicationsSeries = new SeriesCollection();
         private DateTime _selectedDate = DateTime.Now;
         private bool _isShowingStats = true;
+        private bool _showAll = true;
+        private Visibility _showAllVisibility;
 
         public IDailyStatsViewController? Controller { get; set; }
 
@@ -31,6 +34,18 @@ namespace WindowUI.Statistics
         {
             get => _isShowingStats;
             set => SetProperty(ref _isShowingStats, value);
+        }
+
+        public bool ShowAll
+        {
+            get => _showAll;
+            set => SetProperty(ref _showAll, value);
+        }
+
+        public Visibility ShowAllVisibility
+        {
+            get => _showAllVisibility;
+            set => SetProperty(ref _showAllVisibility, value);
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
