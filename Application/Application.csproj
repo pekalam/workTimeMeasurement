@@ -17,6 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NotificationsW8\NotificationsW8.csproj" />
     <ProjectReference Include="..\NotificationsWpf\NotificationsWpf.csproj" />
     <ProjectReference Include="..\WindowUI\WindowUI.csproj" />
   </ItemGroup>
