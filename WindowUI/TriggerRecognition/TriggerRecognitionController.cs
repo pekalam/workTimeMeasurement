@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -171,7 +171,14 @@ namespace WindowUI.TriggerRecognition
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     _rm.Regions[ShellRegions.MainRegion].RemoveActiveView();
-                    _rm.Regions[ShellRegions.MainRegion].Activate(previousView);
+                    if (previousView != null && _rm.Regions[ShellRegions.MainRegion].Views.Contains(previousView))
+                    {
+                        _rm.Regions[ShellRegions.MainRegion].Activate(previousView);
+                    }
+                    else
+                    {
+                        _rm.Regions[ShellRegions.MainRegion].RequestNavigate(nameof(MainWindowView));
+                    }
 
                     if (!windowOpened)
                     {

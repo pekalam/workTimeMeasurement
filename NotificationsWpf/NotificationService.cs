@@ -38,7 +38,7 @@ namespace NotificationsWpf
                             Message = config.Msg,
                             Type = GetNotificationType(config)
                         }
-                    }, expirationTime: TimeSpan.FromHours(1));
+                    }, expirationTime:TimeSpan.FromSeconds(38));
             }
             else
             {
