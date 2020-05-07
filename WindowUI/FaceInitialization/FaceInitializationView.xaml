@@ -83,15 +83,15 @@
             </Button>
         </StackPanel>
         <DockPanel LastChildFill="False">
-            <Grid DockPanel.Dock="Bottom" Panel.ZIndex="100" Visibility="{c:Binding StepInfoPanelVisible, FalseToVisibility=Collapsed}" Background="{Binding StepInfoPanelBrush}" Height="40">
+            <Grid DockPanel.Dock="Bottom" Panel.ZIndex="100" Visibility="{c:Binding StepInfoPanelVisible, FalseToVisibility=Collapsed}" Background="{Binding StepInfoPanelBrush}" Height="50">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="250"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding StepInfoPanelText}" FontSize="18" Padding="20,0,0,0"/>
+                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{Binding StepInfoPanelText}" Foreground="White" FontSize="18" Padding="20,0,0,0"/>
                 <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center">
-                    <Button Command="{Binding StepInfoRetryClick}" Visibility="{c:Binding StepInfoRetryVisible, FalseToVisibility=Hidden}" HorizontalAlignment="Center" VerticalAlignment="Center">Try again</Button>
-                    <Button Command="{Binding StepInfoContinueClick}" Visibility="{c:Binding StepInfoContinueVisible, FalseToVisibility=Hidden}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="10,0,0,0">Continue</Button>
+                    <Button Padding="6" MinWidth="80" Command="{Binding StepInfoRetryClick}" Visibility="{c:Binding StepInfoRetryVisible, FalseToVisibility=Hidden}" HorizontalAlignment="Center" VerticalAlignment="Center">Try again</Button>
+                    <Button Padding="6" MinWidth="80" Command="{Binding StepInfoContinueClick}" Visibility="{c:Binding StepInfoContinueVisible, FalseToVisibility=Hidden}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20,0,20,0">Continue</Button>
                 </StackPanel>
             </Grid>
             <StackPanel HorizontalAlignment="Center" Visibility="{c:Binding PhotoPreviewVisible, FalseToVisibility=Collapsed}" DockPanel.Dock="Bottom" Orientation="Horizontal" Height="120">

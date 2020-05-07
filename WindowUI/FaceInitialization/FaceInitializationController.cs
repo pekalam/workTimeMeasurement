@@ -25,7 +25,6 @@ namespace WindowUI.FaceInitialization
         ICommand StepInfoRetryClick { get; }
         ICommand StartFaceInitCommand { get; }
         ICommand BackCommand { get; }
-        void Exit();
     }
     //todo time init 3s
     public class FaceInitializationController : IFaceInitializationController
@@ -62,6 +61,7 @@ namespace WindowUI.FaceInitialization
         private void BackExecute()
         {
             _camCts.Cancel();
+            WindowUiModuleCommands.NavigateProfile.UnregisterCommand(_userPanelNavigation);
             _regionManager.Regions[ShellRegions.MainRegion].Remove(_regionManager.Regions[ShellRegions.MainRegion].ActiveViews.First());
             _regionManager.Regions[ShellRegions.MainRegion].RequestNavigate(nameof(MainWindowView));
         }
@@ -104,11 +104,6 @@ namespace WindowUI.FaceInitialization
         public ICommand StepInfoRetryClick { get; }
         public ICommand StartFaceInitCommand { get; }
         public ICommand BackCommand { get; }
-
-        public void Exit()
-        {
-            WindowUiModuleCommands.NavigateProfile.UnregisterCommand(_userPanelNavigation);
-        }
 
         private async Task StartInitFaceStep()
         {
