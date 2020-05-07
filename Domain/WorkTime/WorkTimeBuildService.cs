@@ -17,6 +17,11 @@ namespace Domain.WorkTimeAggregate
 
         public WorkTime CreateStartedManually(User.User user, DateTime endDate, bool start = false)
         {
+            if (endDate <= InternalTimeService.GetCurrentDateTime())
+            {
+                throw new ArgumentException("Invalid end date");
+            }
+
             var id = _idGenerator.GenerateId();
 
             //todo long

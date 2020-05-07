@@ -52,6 +52,16 @@ namespace WindowUI.StartWork
 
         private void OnStartWorkExecute()
         {
+            if (_vm.HasErrors)
+            {
+                return;
+            }
+
+            if (_vm.AutoStart && _vm.StartDate < DateTime.Now)
+            {
+                _vm.StartDate = DateTime.Now;
+            }
+
             DateTime? start;
             if (_vm.AutoStart)
             {
