@@ -14,6 +14,7 @@ using WindowUI.LoginWindow;
 using WindowUI.MainWindow;
 using WindowUI.Profile;
 using WindowUI.RepoProxy;
+using WindowUI.Settings;
 using WindowUI.SplashScreen;
 using WindowUI.StartWork;
 using WindowUI.Statistics;
@@ -54,6 +55,7 @@ namespace WindowUI
             containerRegistry.RegisterForNavigation<ProfileView>();
             containerRegistry.RegisterForNavigation<TriggerRecognitionView>();
             containerRegistry.RegisterForNavigation<SplashScreenView>();
+            containerRegistry.RegisterForNavigation<SettingsView>();
 
             containerRegistry.GetContainer()
                 .RegisterType<ITriggerRecognitionController, TriggerRecognitionController>();

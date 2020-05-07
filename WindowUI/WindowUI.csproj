@@ -14,9 +14,6 @@
     <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Settings\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 </Project>

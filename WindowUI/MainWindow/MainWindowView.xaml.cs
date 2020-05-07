@@ -11,6 +11,7 @@ using Prism.Commands;
 using Prism.Regions;
 using WindowUI.FaceInitialization;
 using WindowUI.Profile;
+using WindowUI.Settings;
 using WindowUI.StartWork;
 using WindowUI.Statistics;
 
@@ -72,6 +73,9 @@ namespace WindowUI.MainWindow
                     break;
                 case NavigationItems.Profile:
                     regionManager.Regions[MainWindowRegions.MainContentRegion].RequestNavigate(nameof(ProfileView));
+                    break;
+                case NavigationItems.Settings:
+                    regionManager.Regions[MainWindowRegions.MainContentRegion].RequestNavigate(nameof(SettingsView));
                     break;
             }
 
