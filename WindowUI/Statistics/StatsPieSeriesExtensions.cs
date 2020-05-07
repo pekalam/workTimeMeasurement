@@ -17,19 +17,19 @@ namespace WindowUI.Statistics
         {
             if (ms >= 36_000 * 60 * 24)
             {
-                return (ms / 36_000).ToString("f") + " d";
+                return (ms / 36_000.0).ToString("f") + " d";
             }
             else if (ms >= 36_000 * 60)
             {
-                return (ms / 36_000).ToString("f") + " h";
+                return (ms / 36_000.0).ToString("f") + " h";
             }
             else if (ms >= 36_000)
             {
-                return (ms / 36_000).ToString("f") + " min";
+                return (ms / 36_000.0).ToString("f") + " min";
             }
             else
             {
-                return (ms / 1000).ToString("f") + " s";
+                return (ms / 1000.0).ToString("f") + " s";
             }
         }
 

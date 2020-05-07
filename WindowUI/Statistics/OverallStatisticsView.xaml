@@ -38,7 +38,7 @@
                              Visibility="{c:Binding 'SelectedChartType == local:OverallStatsChartTypes.SingleApplication', FalseToVisibility=Collapsed}"
                              SelectedItem="{Binding SelectedExecutable}"
                              ItemsSource="{Binding Executables}"
-                             HorizontalContentAlignment="Left" Padding="5,0,0,0">
+                             MinWidth="150" HorizontalContentAlignment="Left" Padding="5,0,0,0">
                 <mah:SplitButton.Icon>
                     <Border Padding="4,0,0,0">
                         <iconPacks:FontAwesome Kind="MedappsBrands" />

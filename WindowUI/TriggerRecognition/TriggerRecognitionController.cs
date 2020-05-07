@@ -11,6 +11,7 @@ using System.Windows.Threading;
 using Domain.User;
 using Infrastructure;
 using Infrastructure.src;
+using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using OpenCvSharp;
 using Prism.Commands;
@@ -165,16 +166,21 @@ namespace WindowUI.TriggerRecognition
                 }
             });
 
-            
-            await Task.Delay(1000);
-
-            _rm.Regions[ShellRegions.MainRegion].RemoveActiveView();
-            _rm.Regions[ShellRegions.MainRegion].Activate(previousView);
-
-            if (!windowOpened)
+            await Task.Delay(1000).ContinueWith(_ =>
             {
-                WindowModuleStartupService.ShellWindow.Hide();
-            }
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    _rm.Regions[ShellRegions.MainRegion].RemoveActiveView();
+                    _rm.Regions[ShellRegions.MainRegion].Activate(previousView);
+
+                    if (!windowOpened)
+                    {
+                        WindowModuleStartupService.ShellWindow.Hide();
+                    }
+                });
+
+            });
+
         }
     }
 }

@@ -58,7 +58,7 @@ namespace WindowUI
 
             if (args.faceDetected && args.faceRecognized)
             {
-                if (_state3Error >= 2)
+                if (_state3Error >= 1)
                 {
                     _ea.GetEvent<ShowNotificationEvent>().Publish(new NotificationConfig()
                     {
@@ -79,7 +79,7 @@ namespace WindowUI
                 {
                     Title = !args.faceRecognized ? "Cannot recognize face" : "Cannot detect face",
                     Msg = "Look at front of screen",
-                    Scenario = _state3Error > 3 ? NotificationScenario.WarningTrigger : NotificationScenario.Warning,
+                    Scenario = NotificationScenario.WarningTrigger,
                 });
             }
         }
