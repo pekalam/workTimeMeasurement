@@ -1,6 +1,6 @@
 {
   "sqlite": {
-    "ConnectionString": "Data Source=F:\\WorktimeMeasurement\\testappdb.db;"
+    "ConnectionString": "Data Source=.\\appdb.db;"
   },
   "faceRecognition": {
     "Location": "."

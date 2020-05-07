@@ -28,7 +28,7 @@ namespace Infrastructure.src
                 "mmod_human_face_detector.dat"
             };
             var destinationPath =
-                $"{Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)}\\WorkTime\\";
+                $"{Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData)}\\WTM\\";
 
             var location = Assembly.GetExecutingAssembly().Location;
             var appDir = $"{location.Substring(0, location.LastIndexOf("\\"))}\\";
