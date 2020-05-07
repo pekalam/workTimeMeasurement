@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -51,7 +52,7 @@ namespace WindowUI.FaceInitialization
             _testImageRepository = testImageRepository;
             _authenticationService = authenticationService;
             _regionManager = regionManager;
-            StepInfoContinueClick = new DelegateCommand(StepInfoContinueExecute);
+            StepInfoContinueClick = new DelegateCommand(BackExecute);
             StepInfoRetryClick = new DelegateCommand(StepInfoRetryExecute);
             StartFaceInitCommand = new DelegateCommand(StartFaceInitExecute);
             BackCommand = new DelegateCommand(BackExecute);
@@ -80,10 +81,10 @@ namespace WindowUI.FaceInitialization
             _stepCompleted = false;
         }
 
-        private void StepInfoContinueExecute()
+        private void LockUserPanelNavigation()
         {
-            _camCts.Cancel();
-            _regionManager.Regions[ShellRegions.MainRegion].RequestNavigate(nameof(MainWindowView));
+            _userPanelNavigation = new DelegateCommand(() => { }, () => false);
+            WindowUiModuleCommands.NavigateProfile.RegisterCommand(_userPanelNavigation);
         }
 
         public async Task Init(FaceInitializationViewModel vm)
@@ -91,11 +92,12 @@ namespace WindowUI.FaceInitialization
             _vm = vm;
             _vm.ShowOverlay("Initializing camera...");
 
+            LockUserPanelNavigation();
 
-            _userPanelNavigation = new DelegateCommand(() => { }, () => false);
-            WindowUiModuleCommands.NavigateProfile.RegisterCommand(_userPanelNavigation);
-
-            await StartInitFaceStep();
+            await Task.Run(async () =>
+            {
+                await StartInitFaceStep();
+            });
         }
 
         public ICommand StepInfoContinueClick { get; }
@@ -111,14 +113,13 @@ namespace WindowUI.FaceInitialization
         private async Task StartInitFaceStep()
         {
             _camCts = new CancellationTokenSource();
-            var stepCts = new CancellationTokenSource();
             var camEnumerator = _captureService.CaptureFrames(_camCts.Token).GetAsyncEnumerator(_camCts.Token);
-            Task stepEndTask = null;
+            Task? stepEndTask = null;
 
             while (await camEnumerator.MoveNextAsync())
             {
                 using var frame = camEnumerator.Current;
-                _vm.CallOnFrameChanged(frame.ToBitmapImage());
+                Application.Current.Dispatcher.Invoke(() => _vm.CallOnFrameChanged(frame.ToBitmapImage()));
 
                 var rects = _faceDetection.DetectFrontalThenProfileFaces(frame);
 
@@ -126,31 +127,43 @@ namespace WindowUI.FaceInitialization
                 {
                     if (rects.Length == 1)
                     {
-                        _vm.HideOverlay();
-                        _vm.StepStarted = true;
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            _vm.HideOverlay();
+                            _vm.StepStarted = true;
+                        });
+                       
                         stepEndTask = await _initFaceService.InitFace(_authenticationService.User, camEnumerator,
-                            stepCts.Token);
+                            _camCts.Token);
 
                         _startStep = false;
                     }
                     else
                     {
-                        _vm.ShowOverlay("Waiting for face...");
+                        Application.Current.Dispatcher.Invoke(() => _vm.ShowOverlay("Waiting for face..."));
                     }
                 }
 
 
                 if (rects.Length == 1)
                 {
-                    _vm.HideOverlay();
-                    _vm.CallOnFaceDetected(rects.First());
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        _vm.HideOverlay();
+                        _vm.CallOnFaceDetected(rects.First());
+                    });
+                      
                 }
                 else
                 {
                     if (!_stepCompleted)
                     {
-                        _vm.ShowOverlay("Waiting for face...");
-                        _vm.CallOnNoFaceDetected();
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            _vm.ShowOverlay("Waiting for face...");
+                            _vm.CallOnNoFaceDetected();
+                        });
+                        
                     }
                 }
             }

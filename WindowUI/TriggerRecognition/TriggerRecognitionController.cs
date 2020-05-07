@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -9,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using Domain.User;
 using Infrastructure;
+using Infrastructure.src;
 using MahApps.Metro.Controls.Dialogs;
 using OpenCvSharp;
 using Prism.Commands;
@@ -64,11 +66,7 @@ namespace WindowUI.TriggerRecognition
             _moduleService = moduleService;
             _faceDetection = faceDetection;
             _rm = rm;
-            Retry = new DelegateCommand(() => { });
         }
-
-
-        public ICommand Retry { get; }
 
         private MessageDialogResult ShowRetryDialog()
         {
@@ -82,22 +80,23 @@ namespace WindowUI.TriggerRecognition
                 MessageDialogStyle.AffirmativeAndNegative, mySettings);
         }
 
-        private async Task<bool> BeginFaceRecognition(IAsyncEnumerator<Mat> camEnumerator)
+        private async Task<bool> BeginFaceRecognition(IAsyncEnumerator<Mat> camEnumerator, ITriggerRecognitionViewModel vm)
         {
             //todo progress dispatch
             DateTime? start = null;
             TimeSpan timeElapsed;
+
             while (await camEnumerator.MoveNextAsync())
             {
                 using var frame = camEnumerator.Current;
-                _vm.CallOnFrameChanged(frame.ToBitmapImage());
-
+                vm.CallOnFrameChanged(frame);
+                vm.HideLoading();
 
                 var faces = _faceDetection.DetectFrontalThenProfileFaces(frame);
 
                 if (faces.Length > 0)
                 {
-                    _vm.CallOnFaceDetected(faces[0]);
+                    vm.CallOnFaceDetected(faces[0]);
 
                     if (start == null)
                     {
@@ -111,9 +110,9 @@ namespace WindowUI.TriggerRecognition
                     if (timeElapsed.TotalSeconds >= 3.0)
                     {
                         var recogTask = _faceRecognition.RecognizeFace(_authenticationService.User, frame);
-                        _vm.ShowLoading();
+                        vm.ShowLoading();
                         var (detected, recognized) = await recogTask;
-                        _vm.Loading = false;
+                        vm.Loading = false;
                         if (detected && recognized)
                         {
                             _moduleService.Alghorithm.SetFaceRecog();
@@ -121,9 +120,9 @@ namespace WindowUI.TriggerRecognition
                         }
                         else if (!recognized)
                         {
-                            _vm.ShowRecognitionFailure();
+                            vm.ShowRecognitionFailure();
                             await Task.Delay(1500);
-                            _vm.ResetRecognition();
+                            vm.ResetRecognition();
                             return false;
                         }
 
@@ -132,7 +131,7 @@ namespace WindowUI.TriggerRecognition
                 }
                 else
                 {
-                    Dispatcher.CurrentDispatcher.Invoke(() => _vm.CallOnNoFaceDetected());
+                    vm.CallOnNoFaceDetected();
                     start = null;
                 }
             }
@@ -143,26 +142,33 @@ namespace WindowUI.TriggerRecognition
         public async Task Init(TriggerRecognitionViewModel vm, bool windowOpened, object previousView)
         {
             _vm = vm;
+            _vm.ShowLoading();
 
             _camCts = new CancellationTokenSource();
             _moduleService.Alghorithm.StartManualFaceRecog();
-            var camEnumerator = _captureService.CaptureFrames(_camCts.Token).GetAsyncEnumerator(_camCts.Token);
 
-            bool recognized;
-            do
+            await Task.Run(async () =>
             {
-                _vm.ResetRecognition();
-                recognized = await BeginFaceRecognition(camEnumerator);
+                var vmDispatch = new TriggerRecognitionVmDispatcherDecorator(_vm);
+                var camEnumerator = _captureService.CaptureFrames(_camCts.Token).GetAsyncEnumerator(_camCts.Token);
 
-            } while (!recognized && ShowRetryDialog() == MessageDialogResult.Affirmative);
+                bool recognized;
+                do
+                {
+                    recognized = await BeginFaceRecognition(camEnumerator, vmDispatch);
 
-            if (recognized)
-            {
-                _vm.ShowRecognitionSuccess();
-            }
+                } while (!recognized && ShowRetryDialog() == MessageDialogResult.Affirmative);
 
+                if (recognized)
+                {
+                    vmDispatch.ShowRecognitionSuccess();
+                }
+            });
+
+            
             await Task.Delay(1000);
 
+            _rm.Regions[ShellRegions.MainRegion].RemoveActiveView();
             _rm.Regions[ShellRegions.MainRegion].Activate(previousView);
 
             if (!windowOpened)

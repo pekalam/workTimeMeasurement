@@ -7,13 +7,30 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using Infrastructure;
+using OpenCvSharp;
 using Prism.Mvvm;
 using Prism.Regions;
 using Rect = OpenCvSharp.Rect;
 
 namespace WindowUI.TriggerRecognition
 {
-    public class TriggerRecognitionViewModel : BindableBase, INavigationAware
+    public interface ITriggerRecognitionViewModel
+    {
+        bool? FaceRecognized { get; set; }
+        Visibility RecognizedOverlayVisibility { get; set; }
+        bool Loading { get; set; }
+        void ShowRecognitionFailure();
+        void ShowRecognitionSuccess();
+        void ResetRecognition();
+        void ShowLoading();
+        void HideLoading();
+        void CallOnFrameChanged(Mat frame);
+        void CallOnFaceDetected(Rect rect);
+        void CallOnNoFaceDetected();
+    }
+
+    public class TriggerRecognitionViewModel : BindableBase, INavigationAware, ITriggerRecognitionViewModel
     {
         private readonly ITriggerRecognitionController _controller;
         private Visibility _recognizedOverlayVisibility = Visibility.Hidden;
@@ -27,10 +44,7 @@ namespace WindowUI.TriggerRecognition
         public TriggerRecognitionViewModel(ITriggerRecognitionController controller)
         {
             _controller = controller;
-            Retry = controller.Retry;
         }
-
-        public ICommand Retry { get; }
 
         public bool? FaceRecognized
         {
@@ -74,9 +88,15 @@ namespace WindowUI.TriggerRecognition
             Loading = true;
         }
 
-        public void CallOnFrameChanged(BitmapSource bmp)
+        public void HideLoading()
         {
-            OnFrameChanged?.Invoke(bmp);
+            RecognizedOverlayVisibility = Visibility.Hidden;
+            Loading = false;
+        }
+
+        public void CallOnFrameChanged(Mat frame)
+        {
+            OnFrameChanged?.Invoke(frame.ToBitmapImage());
         }
 
         public void CallOnFaceDetected(Rect rect)
@@ -106,7 +126,6 @@ namespace WindowUI.TriggerRecognition
 
     public interface ITriggerRecognitionController
     {
-        ICommand Retry { get; }
         Task Init(TriggerRecognitionViewModel vm, bool windowOpened, object previousView);
     }
 }
