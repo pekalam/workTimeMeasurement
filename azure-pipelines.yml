@@ -5,6 +5,8 @@
 
 trigger:
 - master
+- release
+- release-msix
 
 pool:
   vmImage: 'windows-2019'
