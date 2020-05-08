@@ -15,6 +15,7 @@ namespace WindowUI.Statistics
         private bool _isShowingStats = true;
         private bool _showAll = true;
         private Visibility _showAllVisibility;
+        private SeriesPickerViewModel _seriesPickerViewModel = new SeriesPickerViewModel();
 
         public IDailyStatsViewController? Controller { get; set; }
 
@@ -46,6 +47,12 @@ namespace WindowUI.Statistics
         {
             get => _showAllVisibility;
             set => SetProperty(ref _showAllVisibility, value);
+        }
+
+        public SeriesPickerViewModel SeriesPickerViewModel
+        {
+            get => _seriesPickerViewModel;
+            set => SetProperty(ref _seriesPickerViewModel, value);
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)

@@ -9,8 +9,7 @@ namespace WindowUI.StartWork
     {
         DelegateCommand StartWork { get; }
         public DelegateCommand StopWork { get; }
-        public DelegateCommand PauseWork { get; }
-        public DelegateCommand ResumeWork { get; }
+        public DelegateCommand TogglePauseWork { get; }
     }
 
     public class StartWorkViewController : IStartWorkViewController
@@ -18,36 +17,51 @@ namespace WindowUI.StartWork
         private StartWorkViewModel _vm;
         private readonly IEventAggregator _ea;
         private readonly WorkTimeModuleService _workTimeModuleService;
+        private bool _stopRequested = false;
+        private bool _pauseRequested = false;
 
         public StartWorkViewController(WorkTimeModuleService workTimeModuleService, IEventAggregator ea)
         {
             _workTimeModuleService = workTimeModuleService;
             _ea = ea;
-            StartWork = new DelegateCommand(OnStartWorkExecute, CanExecuteMethod);
-            StopWork = new DelegateCommand(OnStopWorkExecute);
-            PauseWork = new DelegateCommand(OnPauseWorkExecute);
-            ResumeWork = new DelegateCommand(OnResumeWorkExecute);
+            StartWork = new DelegateCommand(OnStartWorkExecute);
+            StopWork = new DelegateCommand(OnStopWorkExecute, () => !_pauseRequested && !_stopRequested);
+            TogglePauseWork = new DelegateCommand(TogglePauseExecute, () => !_pauseRequested && !_stopRequested);
         }
 
-        private void OnResumeWorkExecute()
+        private void RaiseCanExecChanged()
         {
-            _workTimeModuleService.Resume();
+            StopWork.RaiseCanExecuteChanged();
+            TogglePauseWork.RaiseCanExecuteChanged();
         }
 
-        private void OnPauseWorkExecute()
+        private async void TogglePauseExecute()
         {
-            _workTimeModuleService.Pause();
+            _pauseRequested = true;
+            RaiseCanExecChanged();
+            if (!_vm.IsPaused)
+            {
+                _workTimeModuleService.Resume();
+            }
+            else
+            {
+                await _workTimeModuleService.Pause();
+            }
+            _pauseRequested = false;
+            RaiseCanExecChanged();
         }
 
-        private void OnStopWorkExecute()
+        private async void OnStopWorkExecute()
         {
-            _workTimeModuleService.Stop();
-            _vm.Started = false;
-        }
-
-        private bool CanExecuteMethod()
-        {
-            return true;
+            if (_vm.IsPaused)
+            {
+                _workTimeModuleService.Resume();
+            }
+            _stopRequested = true;
+            RaiseCanExecChanged();
+            await _workTimeModuleService.Stop();
+            _vm.Started = _stopRequested = false;
+            RaiseCanExecChanged();
         }
 
         private void OnStartWorkExecute()
@@ -91,7 +105,6 @@ namespace WindowUI.StartWork
 
         public DelegateCommand StartWork { get; private set; }
         public DelegateCommand StopWork { get; private set; }
-        public DelegateCommand PauseWork { get; private set; }
-        public DelegateCommand ResumeWork { get; private set; }
+        public DelegateCommand TogglePauseWork { get; private set; }
     }
 }

@@ -25,20 +25,32 @@
             <CheckBox Margin="18,0,0,0" Content="Show all" HorizontalAlignment="Right" VerticalAlignment="Center" IsChecked="{Binding ShowAll}" Visibility="{Binding ShowAllVisibility}"/>
         </StackPanel>
 
-        <wpf:PieChart Grid.Row="1" Margin="20" LegendLocation="Bottom" Hoverable="True" MaxHeight="800"
-                      DataTooltip="{x:Null}" Series="{Binding ApplicationsSeries}">
-            <wpf:PieChart.Resources>
-                <Style TargetType="wpf:PieSeries">
-                    <Setter Property="DataLabels" Value="True"></Setter>
-                    <Setter Property="Foreground" Value="#303030"></Setter>
-                    <Setter Property="LabelPosition" Value="OutsideSlice"></Setter>
-                    <Setter Property="Panel.ZIndex" Value="1000"/>
-                </Style>
-            </wpf:PieChart.Resources>
-            <wpf:PieChart.ChartLegend>
-                <local:ApplicationChartLegend Margin="0,50,0,0"/>
-            </wpf:PieChart.ChartLegend>
-        </wpf:PieChart>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <local:SeriesPickerView DataContext="{Binding SeriesPickerViewModel}"/>
+
+            <wpf:PieChart Grid.Column="1" Margin="20" LegendLocation="Bottom" Hoverable="True" MaxHeight="800"
+                          DataTooltip="{x:Null}" Series="{Binding ApplicationsSeries}">
+                <wpf:PieChart.Resources>
+                    <Style TargetType="wpf:PieSeries">
+                        <Setter Property="DataLabels" Value="True"></Setter>
+                        <Setter Property="Foreground" Value="#303030"></Setter>
+                        <Setter Property="LabelPosition" Value="OutsideSlice"></Setter>
+                        <Setter Property="Panel.ZIndex" Value="1000"/>
+                    </Style>
+                </wpf:PieChart.Resources>
+                <wpf:PieChart.ChartLegend>
+                    <local:ApplicationChartLegend Margin="0,50,0,0"/>
+                </wpf:PieChart.ChartLegend>
+            </wpf:PieChart>
+        </Grid>
+
+
         <Grid Grid.Row="1" Visibility="{c:Binding '!IsShowingStats', FalseToVisibility=Hidden}" Panel.ZIndex="999" Background="White">
             <TextBlock Text="No statistics available" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
         </Grid>

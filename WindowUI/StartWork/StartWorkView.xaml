@@ -63,20 +63,10 @@
                 </Grid>
                 <StackPanel Margin="0,30,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
                     <Button Name="StopBtn" Content="Stop" Command="{Binding StopWork}" FontSize="16" Width="60" Background="Red" Foreground="White"/>
-                    <ToggleButton Name="PauseBtn" Content="Pause" FontSize="16" Width="60" Margin="20,0,0,0">
-                        <ToggleButton.Style>
-                            <Style TargetType="{x:Type ToggleButton}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsChecked" Value="False">
-                                        <Setter Property="Command" Value="{Binding ResumeWork}"/>
-                                    </Trigger>
-                                    <Trigger Property="IsChecked" Value="True">
-                                        <Setter Property="Command" Value="{Binding PauseWork}"/>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </ToggleButton.Style>
-                    </ToggleButton>
+                    <ToggleButton Name="PauseBtn" Content="Pause" FontSize="16" Width="60" Margin="20,0,0,0" 
+                                  Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
+                                  IsChecked="{Binding IsPaused}" 
+                                  Command="{Binding TogglePauseWork}"/>
                 </StackPanel>
             </StackPanel>
         </Border>

@@ -17,9 +17,13 @@ namespace WorkTimeAlghorithm.StateMachine
             return rnd.Next(50_000, 120_000);
         }
 
+        public bool InProgress { get; private set; }
+        public void Cancel() => _cts?.Cancel();
+
         public async Task Enter(WMonitorAlghorithm.State state,
             StateMachine<WMonitorAlghorithm.Triggers, WMonitorAlghorithm.States> sm)
         {
+            InProgress = true;
             _cts = new CancellationTokenSource();
             state.CanCapureMouseKeyboard = true;
 
@@ -32,16 +36,13 @@ namespace WorkTimeAlghorithm.StateMachine
             }
             catch (TaskCanceledException)
             {
+                InProgress = false;
                 return;
             }
 
+            InProgress = false;
             Log.Logger.Debug("State 5 face compare timeout");
             sm.Next(WMonitorAlghorithm.Triggers.FaceNotRecog);
-        }
-
-        public void Exit()
-        {
-            _cts.Cancel();
         }
     }
 }

@@ -30,9 +30,13 @@ namespace WorkTimeAlghorithm.StateMachine
                 _config = configurationService.Get<State3Configuration>("state3");
             }
 
+            public bool InProgress { get; private set; }
+            public void Cancel() => _cts?.Cancel();
+
             public async Task Enter(State state,
                 StateMachine<Triggers, States> sm, WorkTime workTime, WMonitorAlghorithm alghorithm)
             {
+                InProgress = true;
                 _cts = new CancellationTokenSource();
                 state.CanCapureMouseKeyboard = true;
                 bool faceDetected = false;
@@ -52,6 +56,7 @@ namespace WorkTimeAlghorithm.StateMachine
                     }
                     catch (TaskCanceledException)
                     {
+                        InProgress = false;
                         return;
                     }
 
@@ -71,14 +76,11 @@ namespace WorkTimeAlghorithm.StateMachine
                         _workTimeEventService.StopRecognitionFailure();
                         _workTimeEventService.CommitTempChanges();
                     }
+
+                    InProgress = false;
                 }
 
                 sm.Next(WMonitorAlghorithm.Triggers.FaceRecog);
-            }
-
-            public void Exit()
-            {
-                _cts?.Cancel();
             }
         }
     }

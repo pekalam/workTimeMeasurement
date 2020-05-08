@@ -18,26 +18,46 @@ namespace WindowUI.Statistics
 {
     internal static class WorkTimeStatsExtensions
     {
-        public static List<PieSeries> ToApplicationsPieSeries(this List<WorkTime> selected)
+        public static List<PieSeries> ToApplicationsPieSeries(this List<WorkTime> selected, SeriesPickerViewModel seriesPicker)
         {
-            var series = selected
-                .SelectMany(w => w.MouseActionEvents)
-                .GroupBy(a => a.MkEvent.Executable)
-                .Select(g => g.AsEnumerable().ToPieSeries(g.Key))
-                .SelectMany(s => s)
+            return ToApplicationsPieSeries(selected, seriesPicker.ShowMouse, seriesPicker.ShowKeyboard,
+                seriesPicker.ShowWatchingScreen, seriesPicker.ShowAway);
+        }
 
-                .Concat(selected.SelectMany(w => w.KeyboardActionEvents)
+        public static List<PieSeries> ToApplicationsPieSeries(this List<WorkTime> selected, bool mouse = true, bool keyboard = true, bool watchingScr = true, bool away = true)
+        {
+            var series =
+                new List<PieSeries>();
+
+            if (mouse)
+            {
+                series = series.Concat(selected.SelectMany(w => w.MouseActionEvents)
                     .GroupBy(a => a.MkEvent.Executable)
-                    .Select(g => g.AsEnumerable().ToPieSeries(g.Key))
-                    .SelectMany(s => s))
+                    .Select(g => g.AsEnumerable().ToPieSeries(g.Key, true))
+                    .SelectMany(s => s)).ToList();
+            }
 
-                .Concat(selected.SelectMany(w => w.UserWatchingScreen)
+            if (keyboard)
+            {
+                series = series.Concat(selected.SelectMany(w => w.KeyboardActionEvents)
+                    .GroupBy(a => a.MkEvent.Executable)
+                    .Select(g => g.AsEnumerable().ToPieSeries(g.Key, true))
+                    .SelectMany(s => s)).ToList();
+            }
+
+            if (watchingScr)
+            {
+                series = series.Concat(selected.SelectMany(w => w.UserWatchingScreen)
                     .GroupBy(a => a.Executable)
-                    .Select(g => g.AsEnumerable().ToPieSeries(g.Key))
-                    .SelectMany(s => s))
+                    .Select(g => g.AsEnumerable().ToPieSeries(g.Key, true))
+                    .SelectMany(s => s)).ToList();
+            }
 
-                .Concat(selected.SelectMany(w => w.FaceRecognitionFailures).ToPieSeries("Unknown"))
-                .ToList();
+            if (away)
+            {
+                series = series.Concat(selected.SelectMany(w => w.FaceRecognitionFailures).ToPieSeries("Unknown", true))
+                    .ToList();
+            }
 
             return series;
         }
@@ -99,7 +119,7 @@ namespace WindowUI.Statistics
 
         private void UpdateApplicationsSeries(List<WorkTime> selected)
         {
-            var series = selected.ToApplicationsPieSeries().RemoveShort(!_vm.ShowAll);
+            var series = selected.ToApplicationsPieSeries(_vm.SeriesPickerViewModel).RemoveShort(!_vm.ShowAll);
 
             Dispatcher.CurrentDispatcher.InvokeAsync(() =>
             {
@@ -236,6 +256,7 @@ namespace WindowUI.Statistics
             _vm = vm;
 
             _vm.PropertyChanged += VmOnPropertyChanged;
+            _vm.SeriesPickerViewModel.PropertyChanged += (a,b) => UpdateChart();
             UpdateChart();
 
             if (_workTimes.Count > 0)

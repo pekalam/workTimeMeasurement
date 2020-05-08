@@ -50,21 +50,28 @@
 
         <!--Screen 1-->
 
-        <wpf:PieChart Grid.Row="1"
-                      Visibility="{c:Binding 'SelectedChartType == local:OverallStatsChartTypes.Applications', FalseToVisibility=Collapsed}"
-                      Margin="20" LegendLocation="Bottom" Hoverable="True" MaxHeight="800" DataTooltip="{x:Null}"
-                      Series="{Binding ApplicationsSeries}">
-            <wpf:PieChart.Resources>
-                <Style TargetType="wpf:PieSeries">
-                    <Setter Property="DataLabels" Value="True" />
-                    <Setter Property="Foreground" Value="#303030" />
-                    <Setter Property="LabelPosition" Value="OutsideSlice" />
-                </Style>
-            </wpf:PieChart.Resources>
-            <wpf:PieChart.ChartLegend>
-                <local:ApplicationChartLegend Margin="0,50,0,0" />
-            </wpf:PieChart.ChartLegend>
-        </wpf:PieChart>
+        <Grid Grid.Row="1" Visibility="{c:Binding 'SelectedChartType == local:OverallStatsChartTypes.Applications', FalseToVisibility=Collapsed}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <local:SeriesPickerView DataContext="{Binding SeriesPickerViewModel}"/>
+            <wpf:PieChart Grid.Column="1"
+                Margin="20" LegendLocation="Bottom" Hoverable="True" MaxHeight="800" DataTooltip="{x:Null}"
+                Series="{Binding ApplicationsSeries}">
+                <wpf:PieChart.Resources>
+                    <Style TargetType="wpf:PieSeries">
+                        <Setter Property="DataLabels" Value="True" />
+                        <Setter Property="Foreground" Value="#303030" />
+                        <Setter Property="LabelPosition" Value="OutsideSlice" />
+                    </Style>
+                </wpf:PieChart.Resources>
+                <wpf:PieChart.ChartLegend>
+                    <local:ApplicationChartLegend Margin="0,50,0,0" />
+                </wpf:PieChart.ChartLegend>
+            </wpf:PieChart>
+        </Grid>
+
 
         <!---->
 

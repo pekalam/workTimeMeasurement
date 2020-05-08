@@ -33,9 +33,13 @@ namespace WorkTimeAlghorithm.StateMachine
                 _config = configurationService.Get<State2Configuration>("state2");
             }
 
+            public bool InProgress { get; private set; }
+            public void Cancel() => _cts?.Cancel();
+
             public async Task Enter(State state,
                 StateMachine<Triggers, States> sm, WorkTime workTime, WMonitorAlghorithm alghorithm)
             {
+                InProgress = true;
                 state.CanCapureMouseKeyboard = true;
 
                 _cts = new CancellationTokenSource();
@@ -55,6 +59,7 @@ namespace WorkTimeAlghorithm.StateMachine
                         state.CanCapureMouseKeyboard = false;
                         _workTimeEventService.DiscardTempChanges();
                         _workTimeEventService.AddRecognitionFailure(false, faceRecognized);
+                        InProgress = false;
                         sm.Next(Triggers.NoFace);
                         return;
                     }
@@ -63,6 +68,7 @@ namespace WorkTimeAlghorithm.StateMachine
                     {
                         _workTimeEventService.StopRecognitionFailure();
                         _workTimeEventService.CommitTempChanges();
+                        InProgress = false;
                         sm.Next(Triggers.FaceRecog);
                         return;
                     }
@@ -75,18 +81,15 @@ namespace WorkTimeAlghorithm.StateMachine
                     }
                     catch (TaskCanceledException)
                     {
+                        InProgress = false;
                         return;
                     }
                 }
 
                 _workTimeEventService.DiscardTempChanges();
                 _workTimeEventService.AddRecognitionFailure(faceDetected, faceRecognized);
+                InProgress = false;
                 sm.Next(WMonitorAlghorithm.Triggers.FaceNotRecog);
-            }
-
-            public void Exit(WMonitorAlghorithm.Triggers trigger)
-            {
-                _cts?.Cancel();
             }
         }
     }

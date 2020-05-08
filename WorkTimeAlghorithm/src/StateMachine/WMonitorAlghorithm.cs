@@ -33,8 +33,6 @@ namespace WorkTimeAlghorithm.StateMachine
             _state3 = new State3Service(faceRecognition, workTimeEventService, configurationService);
         }
 
-        public bool Paused => _sm.CurrentState.Name == States.PAUSE_STATE;
-        public bool Stopped => _sm.CurrentState.Name == States.STOP_STATE;
         public bool ManualRecog => _sm.CurrentState.Name == States.MANUAL;
 
         private void InitSubscriptions()
@@ -93,8 +91,9 @@ namespace WorkTimeAlghorithm.StateMachine
             await _sm.NextAsync(Triggers.Start);
         }
 
-        public void Pause()
+        public async Task Pause()
         {
+            await StopStateServices();
             _sm.Next(Triggers.Pause);
             _state.CanCapureMouseKeyboard = true;
         }
@@ -105,16 +104,34 @@ namespace WorkTimeAlghorithm.StateMachine
             _workTimeEventService.ResetLastEvents();
         }
 
-        public void Stop()
+        private Task StopStateServices()
         {
+            return Task.Run(async () =>
+            {
+                do
+                {
+                    _state2.Cancel();
+                    _state3.Cancel();
+                    _state5.Cancel();
+                    await Task.Delay(200);
+                } while (_state2.InProgress || _state3.InProgress || _state5.InProgress);
+            });
+        }
+
+        public Task Stop()
+        {
+            _state.CanCapureMouseKeyboard = false;
             _keyboardSub.Dispose();
             _mouseSub.Dispose();
             _mouseKeyboardMonitor.Stop();
-            _sm.Next(Triggers.Stop);
-            _state.CanCapureMouseKeyboard = false;
+
+            var task= StopStateServices();
+
 #if DEV_MODE
-            _vis.Dispose();
+            task = task.ContinueWith(_ => _vis.Dispose());
 #endif
+
+            return task;
         }
 
 

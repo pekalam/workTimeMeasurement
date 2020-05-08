@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Domain.Repositories;
 using Domain.User;
 using Domain.WorkTimeAggregate;
@@ -56,10 +57,10 @@ namespace WindowUI
             AlgorithmStarted = true;
         }
 
-        public void Pause()
+        public async Task Pause()
         {
+            await _alghorithm.Pause();
             CurrentWorkTime.Pause();
-            _alghorithm.Pause();
         }
 
         public void Resume()
@@ -68,10 +69,10 @@ namespace WindowUI
             _alghorithm.Resume();
         }
 
-        public void Stop()
+        public async Task Stop()
         {
+            await _alghorithm.Stop();
             CurrentWorkTime.Stop();
-            _alghorithm.Stop();
             _monitorAlghorithmNotifications.Reset();
             _repository.Save(CurrentWorkTime);
             CurrentWorkTime.MarkPendingEventsAsHandled();

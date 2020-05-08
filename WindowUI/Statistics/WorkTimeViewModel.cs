@@ -9,8 +9,8 @@ namespace WindowUI.Statistics
     {
         public WorkTimeViewModel(WorkTime workTime)
         {
-            Start = workTime.StartDate;
-            End = workTime.EndDate;
+            Start = workTime.StartDate?.ToLocalTime();
+            End = workTime.EndDate.ToLocalTime();
             InProgress = workTime.Started && !workTime.Stopped && !workTime.Paused;
         }
 

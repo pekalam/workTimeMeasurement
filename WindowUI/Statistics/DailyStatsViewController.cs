@@ -32,6 +32,7 @@ namespace WindowUI.Statistics
             _vm = vm;
 
             _vm.PropertyChanged += VmOnPropertyChanged;
+            _vm.SeriesPickerViewModel.PropertyChanged += (a, b) => UpdateChart();
         }
 
         public void UpdateChart()
@@ -50,7 +51,7 @@ namespace WindowUI.Statistics
             }
             _vm.IsShowingStats = true;
 
-            var series = workTimes.ToApplicationsPieSeries().RemoveShort(!_vm.ShowAll);
+            var series = workTimes.ToApplicationsPieSeries(_vm.SeriesPickerViewModel).RemoveShort(!_vm.ShowAll);
             _vm.ApplicationsSeries.Clear();
             _vm.ApplicationsSeries.AddRange(series);
         }

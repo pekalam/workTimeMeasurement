@@ -20,14 +20,14 @@ namespace WindowUI.StartWork
         private DateTime? _endDate = DateTime.Now.AddHours(1);
         private readonly DispatcherTimer _timer = new DispatcherTimer();
         private TimeSpan _timerDate;
+        private bool _isPaused;
 
         public StartWorkViewModel(StartWorkViewController controller)
         {
             _controller = controller;
             StartWork = controller.StartWork.ObservesCanExecute(() => StartCanExec);
             StopWork = controller.StopWork;
-            PauseWork = controller.PauseWork;
-            ResumeWork = controller.ResumeWork;
+            TogglePauseWork = controller.TogglePauseWork;
             _timer.Tick += TimerOnTick;
             _timer.Interval = TimeSpan.FromSeconds(1);
         }
@@ -39,8 +39,7 @@ namespace WindowUI.StartWork
 
         public DelegateCommand StartWork { get; set; }
         public DelegateCommand StopWork { get; }
-        public DelegateCommand PauseWork { get; }
-        public DelegateCommand ResumeWork { get; }
+        public DelegateCommand TogglePauseWork { get; }
 
         public bool StartCanExec => !HasErrors;
 
@@ -136,6 +135,11 @@ namespace WindowUI.StartWork
             }
         }
 
+        public bool IsPaused
+        {
+            get => _isPaused;
+            set => SetProperty(ref _isPaused, value);
+        }
 
         public void OnNavigatedTo(NavigationContext navigationContext)
         {
