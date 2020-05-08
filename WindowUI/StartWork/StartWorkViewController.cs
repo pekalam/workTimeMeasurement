@@ -25,7 +25,7 @@ namespace WindowUI.StartWork
             _workTimeModuleService = workTimeModuleService;
             _ea = ea;
             StartWork = new DelegateCommand(OnStartWorkExecute);
-            StopWork = new DelegateCommand(OnStopWorkExecute, () => !_pauseRequested && !_stopRequested);
+            StopWork = new DelegateCommand(OnStopWorkExecute, () => !_pauseRequested && !_stopRequested && (!_vm?.IsPaused ?? true));
             TogglePauseWork = new DelegateCommand(TogglePauseExecute, () => !_pauseRequested && !_stopRequested);
         }
 

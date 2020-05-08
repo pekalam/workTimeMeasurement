@@ -4,6 +4,7 @@
              xmlns:prism="http://prismlibrary.com/"             
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
              mc:Ignorable="d" x:Class="WindowUI.Profile.ProfileView"             
              prism:ViewModelLocator.AutoWireViewModel="True" d:DesignWidth="1200" d:DesignHeight="800">
     <Grid Background="White">
@@ -36,7 +37,13 @@
 
             </StackPanel>
             <TextBlock Margin="0,20,0,0" Text="Click to restart initialization step" FontSize="14"/>
-            <Button Margin="0,10,0,0" HorizontalAlignment="Left" Content="Restart" Command="{Binding RestartInit}"></Button>
+            <Button Margin="0,10,0,0" HorizontalAlignment="Left" Content="Restart" Command="{Binding RestartInit}" ToolTipService.ShowOnDisabled="True">
+                <Button.ToolTip>
+                    <ToolTip Visibility="{c:Binding AlgorithmStarted}">
+                        <TextBlock Text="Stop monitoring to restart"/>
+                    </ToolTip>
+                </Button.ToolTip>
+            </Button>
         </StackPanel>
         
     </Grid>

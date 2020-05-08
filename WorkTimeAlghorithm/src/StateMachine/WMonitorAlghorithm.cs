@@ -20,6 +20,8 @@ namespace WorkTimeAlghorithm.StateMachine
 
         public event Action<(bool faceDetected, bool faceRecognized)> State3Result;
         public event Action<(bool faceDetected, bool faceRecognized)> State2Result;
+        public event Action AlgorithmStopped;
+        public event Action AlgorithmStarted;
 
         private IDisposable _keyboardSub;
         private IDisposable _mouseSub;
@@ -34,6 +36,7 @@ namespace WorkTimeAlghorithm.StateMachine
         }
 
         public bool ManualRecog => _sm.CurrentState.Name == States.MANUAL;
+        public bool Started => _sm != null && _sm.CurrentState.Name != States.s1 && _sm.CurrentState.Name != States.PAUSE_STATE && _sm.CurrentState.Name != States.STOP_STATE;
 
         private void InitSubscriptions()
         {
@@ -89,6 +92,7 @@ namespace WorkTimeAlghorithm.StateMachine
             InitStateMachine();
             _mouseKeyboardMonitor.Start();
             await _sm.NextAsync(Triggers.Start);
+            AlgorithmStarted?.Invoke();
         }
 
         public async Task Pause()
@@ -118,7 +122,7 @@ namespace WorkTimeAlghorithm.StateMachine
             });
         }
 
-        public Task Stop()
+        public async Task Stop()
         {
             _state.CanCapureMouseKeyboard = false;
             _keyboardSub.Dispose();
@@ -131,7 +135,9 @@ namespace WorkTimeAlghorithm.StateMachine
             task = task.ContinueWith(_ => _vis.Dispose());
 #endif
 
-            return task;
+            await task;
+            _sm.Next(Triggers.Stop);
+            AlgorithmStopped?.Invoke();
         }
 
 

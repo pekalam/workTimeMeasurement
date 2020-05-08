@@ -62,7 +62,27 @@
                     <TextBlock HorizontalAlignment="Left" Margin="20,0,0,0" Grid.Column="1" Text="{Binding TimerDate, Converter={StaticResource timerConverter}}" FontSize="16"/>
                 </Grid>
                 <StackPanel Margin="0,30,0,0" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Name="StopBtn" Content="Stop" Command="{Binding StopWork}" FontSize="16" Width="60" Background="Red" Foreground="White"/>
+                    <Button Name="StopBtn" Content="Stop" Command="{Binding StopWork}" FontSize="16" Width="60">
+                        <Button.Style>
+                            <Style BasedOn="{StaticResource MahApps.Styles.Button.Flat}" TargetType="{x:Type Button}">
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Background" Value="Red"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="DarkRed"/>
+                                    </Trigger>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Button.Flat.Background}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.Gray2}" />
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter Property="Foreground" Value="DarkRed" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+
+                        </Button.Style>
+                    </Button>
                     <ToggleButton Name="PauseBtn" Content="Pause" FontSize="16" Width="60" Margin="20,0,0,0" 
                                   Style="{DynamicResource MahApps.Styles.ToggleButton.Flat}"
                                   IsChecked="{Binding IsPaused}" 

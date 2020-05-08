@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Regions;
 
@@ -9,7 +10,7 @@ namespace WindowUI.Profile
     public interface IProfileViewController
     {
         void Init(ProfileViewModel vm);
-        ICommand RestartInit { get; }
+        DelegateCommand RestartInit { get; }
     }
 
     public class ProfileViewModel : BindableBase, INavigationAware
@@ -17,6 +18,7 @@ namespace WindowUI.Profile
         private readonly IProfileViewController _controller;
         private ObservableCollection<BitmapImage> _referenceImgs;
         private string _username;
+        private bool _algorithmStarted;
 
         public ProfileViewModel(IProfileViewController controller)
         {
@@ -36,6 +38,12 @@ namespace WindowUI.Profile
         {
             get => _username;
             set => SetProperty(ref _username, value);
+        }
+
+        public bool AlgorithmStarted
+        {
+            get => _algorithmStarted;
+            set => SetProperty(ref _algorithmStarted, value);
         }
 
         public void OnNavigatedTo(NavigationContext navigationContext)

@@ -8,12 +8,12 @@ namespace WorkTimeAlghorithm.StateMachine
     {
         internal enum Triggers
         {
-            Start, NoFace, FaceNotRecog, FaceRecog, MouseMv, KeyboardMv, Pause, Resume, ManualTrigger, ManualCancel
+            Start, NoFace, FaceNotRecog, FaceRecog, MouseMv, KeyboardMv, Pause, Resume, ManualTrigger, ManualCancel, Stop
         }
 
         internal enum States
         {
-            s1,s2,s3,s5,MANUAL, PAUSE_STATE
+            s1,s2,s3,s5,MANUAL, PAUSE_STATE, STOP_STATE
         }
 
         internal class State
@@ -66,6 +66,9 @@ namespace WorkTimeAlghorithm.StateMachine
 
                 .HoldingGlobState(Triggers.Pause, _ => Log.Logger.Debug("PAUSE"), 
                     States.PAUSE_STATE, Triggers.Resume)
+
+
+                .HoldingGlobState(Triggers.Stop, _ => Log.Logger.Debug("STOP"), States.STOP_STATE, Triggers.Stop)
 
                 .Build(States.s1);
         }

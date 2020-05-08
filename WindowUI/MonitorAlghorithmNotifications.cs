@@ -18,6 +18,17 @@ namespace WindowUI
             _ea = ea;
             _alghorithm.State3Result += AlghorithmOnState3Result;
             _alghorithm.State2Result += AlghorithmOnState2Result;
+            _alghorithm.AlgorithmStopped += OnAlgorithmStopped;
+        }
+
+        private void OnAlgorithmStopped()
+        {
+            _ea.GetEvent<ShowNotificationEvent>().Publish(new NotificationConfig()
+            {
+                Title = "Monitoring stopped",
+                Msg = "",
+                Scenario = NotificationScenario.Information
+            });
         }
 
         private void AlghorithmOnState2Result((bool faceDetected, bool faceRecognized) args)
